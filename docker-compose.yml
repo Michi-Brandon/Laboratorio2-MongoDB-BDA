@@ -1,33 +1,43 @@
-version: '3'
+version: "3.8"
 
 services:
-  mongo-primary:
-    image: mongo
-    container_name: mongo-primary
+  mongo1:
+    image: mongo:5
+    container_name: mongo1
+    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30001"]
+    volumes:
+      - ./data/mongo-1:/data/db
     ports:
-      - "27017:27017"
+      - 30001:30001
+    healthcheck:
+      test: test $$(echo "rs.initiate({_id:'my-replica-set',members:[{_id:0,host:\"mongo1:30001\"}]})")
+      interval: 10s
+      start period: 30s
     networks:
-      - mongodb-cluster
-    command: "--replSet rs0"
-
-  mongo-secondary1:
-    image: mongo
-    container_name: mongo-secondary1
+      - my-network
+  
+  mongo2:
+    image: mongo:5
+    container_name: mongo2
+    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30002"]
+    volumes:
+      - ./data/mongo-2:/data/db
     ports:
-      - "27018:27017"
+      - 30002:30002
     networks:
-      - mongodb-cluster
-    command: "--replSet rs0"
-
-  mongo-secondary2:
-    image: mongo
-    container_name: mongo-secondary2
+      - my-network
+  
+  mongo3:
+    image: mongo:5
+    container_name: mongo3
+    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30003"]
+    volumes:
+      - ./data/mongo-3:/data/db
     ports:
-      - "27019:27017"
+      - 30003:30003
     networks:
-      - mongodb-cluster
-    command: "--replSet rs0"
-
+      - my-network
+  
 networks:
-  mongodb-cluster:
+  my-networks:
     driver: bridge
