@@ -12,7 +12,7 @@ services:
     healthcheck:
       test: test $$(echo "rs.initiate({_id:'my-replica-set',members:[{_id:0,host:\"mongo1:30001\"}]})")
       interval: 10s
-      start period: 30s
+      start_period: 30s
     networks:
       - my-network
   
